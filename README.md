@@ -6,5 +6,5 @@ In the R Studio console, run the code below:
 ```
 library(shiny)
 
-runGitHub("Finance-Finder", "Andrew71633")
+runGitHub("Finance-Finder", "Andrew71633", ref = "main")
 ```
