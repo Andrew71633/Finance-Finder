@@ -9,7 +9,7 @@
 
 library(shiny)
 
-# Define UI for application that draws a histogram
+# Define UI for application
 ui <- fluidPage(
    
    # Application title
@@ -28,7 +28,8 @@ ui <- fluidPage(
       
       # Show the calculated price
       mainPanel(
-         textOutput("price")
+         textOutput("price"),
+         htmlOutput("note")
       )
    )
 )
@@ -46,21 +47,33 @@ server <- function(input, output) {
     interest <- input$interest/rate
     year <- input$year*rate
     coupon <- input$coupon/rate
-    #price <- principal/(1+interest)^year
-    #for (i in 1:year){
-    #   price <- price + (coupon*principal)/(1+interest)^i
-    #}
-    #price
-    i <- seq(1,year)
-    sum((coupon*principal)/(1+interest)^i,principal/(1+interest)^year)
+    
+    #Sums coupon payments
+    if (year>=1/rate){
+      i <- 1:year
+      sum((coupon*principal)/(1+interest)^i,principal/(1+interest)^year)
+    }
+    #If time is too short, only principal is paid, no coupons
+    else {
+      sum(principal/(1+interest)^year)
+    }
   })
   
   #Output text
   output$price <- renderText({
     paste("The price is",formula())
   })
+  
+  #Check for negative
+  textnote<-eventReactive(input$do,{
+    if(input$interest< 0 || input$coupon <0 || input$year <0){
+      paste0("<font color=\"#e05959\"><b>", "Please use non-negative inputs ", "</b></font>")
+    }
+  })
+  output$note<-renderText({
+    HTML(textnote() )
+  })   
 }
 
 # Run the application 
 shinyApp(ui = ui, server = server)
-
