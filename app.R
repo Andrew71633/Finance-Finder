@@ -28,7 +28,7 @@ ui <- fluidPage(
       
       # Show the calculated price
       mainPanel(
-         textOutput("price"),
+         #textOutput("price"),
          htmlOutput("note")
       )
    )
@@ -60,14 +60,17 @@ server <- function(input, output) {
   })
   
   #Output text
-  output$price <- renderText({
-    paste("The price is",formula())
-  })
+  #output$price <- renderText({
+  #  paste("The price is",formula())
+  #})
   
-  #Check for negative
+  #Output text (check for negative)
   textnote<-eventReactive(input$do,{
     if(input$interest< 0 || input$coupon <0 || input$year <0){
       paste0("<font color=\"#e05959\"><b>", "Please use non-negative inputs ", "</b></font>")
+    }
+    else {
+      paste("The price is",formula())
     }
   })
   output$note<-renderText({
